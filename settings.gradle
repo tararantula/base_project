@@ -1,0 +1,5 @@
+rootProject.name = 'base_project'
+includeBuild 'user_interface'
+includeBuild 'shops'
+includeBuild 'warehouses_factories'
+includeBuild 'api_gateway'

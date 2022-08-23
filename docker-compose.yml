@@ -1,0 +1,74 @@
+version: "3.8"
+services:
+
+  user-interface:
+    build:
+      context: .
+      dockerfile: ./user_interface/Dockerfile
+    container_name: user_interface
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/compose-postgres
+      - SPRING_DATASOURCE_USERNAME=compose-postgres
+      - SPRING_DATASOURCE_PASSWORD=compose-postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    ports:
+      - 8080:8080
+
+
+  shops:
+    build:
+      context: .
+      dockerfile: ./shops/Dockerfile
+    container_name: shops
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/compose-postgres
+      - SPRING_DATASOURCE_USERNAME=compose-postgres
+      - SPRING_DATASOURCE_PASSWORD=compose-postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    ports:
+      - 9090:9090
+
+
+  warehouses_factories:
+    build:
+      context: .
+      dockerfile: ./warehouses_factories/Dockerfile
+    container_name: warehouses_factories
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/compose-postgres
+      - SPRING_DATASOURCE_USERNAME=compose-postgres
+      - SPRING_DATASOURCE_PASSWORD=compose-postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    ports:
+      - 7070:7070
+
+
+  api_gateway:
+    build:
+      context: .
+      dockerfile: ./api_gateway/Dockerfile
+    container_name: api_gateway
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/compose-postgres
+      - SPRING_DATASOURCE_USERNAME=compose-postgres
+      - SPRING_DATASOURCE_PASSWORD=compose-postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    ports:
+      - 9000:9000
+
+
+  db:
+    image: 'postgres:13.1-alpine'
+    ports:
+      - 5433:5432
+    environment:
+      - POSTGRES_USER=compose-postgres
+      - POSTGRES_PASSWORD=compose-postgres
