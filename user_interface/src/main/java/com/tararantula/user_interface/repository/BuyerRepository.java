@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BuyerRepository extends JpaRepository<Buyer,Integer> {
     boolean existsByName(String name);
+    Buyer findByName(String name);
 }
