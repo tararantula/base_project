@@ -11,12 +11,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/warehousesAndFactories")
 public class MainController {
     WarehousesRepository warehousesRepository;
-//добавть продукт
-    @PostMapping("/addProduct")
-    public void addProduct(@RequestParam String nameWarehouses, @RequestParam String nameProduct, @RequestParam String description, @RequestParam int number) {
+    //добавть продукт
+    @GetMapping("/addProduct")
+    public Warehouses addProduct(@RequestParam String nameWarehouses, @RequestParam String nameProduct, @RequestParam String description, @RequestParam int number) {
         warehousesRepository.save(Warehouses.builder().nameWarehouse(nameWarehouses).nameProduct(nameProduct).description(description).number(number).build());
+        return warehousesRepository.findByName(nameWarehouses);
     }
-//пополнение магазина со склада
+    //удаление продукта
+    @DeleteMapping("/DeleteProduct")
+    public void DeleteProduct(@PathVariable Integer id){
+        warehousesRepository.deleteById(id);
+    }
+    //пополнение магазина со склада
     @PostMapping("/productDelivery/{idProductFromWarehouse}&{number}&{name}&{description}")
     public ResponseEntity<?> productDelivery(@PathVariable Integer idProductFromWarehouse, @PathVariable int number, @PathVariable String name, @PathVariable String description) {
         Warehouses warehouses = warehousesRepository.findById(idProductFromWarehouse).get();
