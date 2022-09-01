@@ -24,7 +24,7 @@ public class MainController {
     BuyInfoRepository buyInfoRepository;
     RestTemplateServise restTemplateServise;
     //создание продукта
-    @RequestMapping("/createProducts")
+    @GetMapping("/createProducts")
     public ResponseEntity<?> createProducts(@RequestParam String name, @RequestParam String description, @RequestParam int sum, @RequestParam int number, @RequestParam Integer shopsId) {
         if (shopsRepository.existsById(shopsId)) {
             productsRepository.save(Products.builder().name(name).description(description).sum(sum).number(number).shopsId(shopsId).build());
@@ -33,24 +33,30 @@ public class MainController {
             return ResponseEntity.status(401).build();
         }
     }
+    //удаление продукта
+    @DeleteMapping("/deleteProducts")
+    public void deleteProducts(@PathVariable Integer id){
+        productsRepository.deleteById(id);
+    }
     //создание магазина
-    @RequestMapping("/createShops")
-    public void createShops(@RequestParam String name, @RequestParam String address, @RequestParam String phoneNumber) {
+    @GetMapping("/createShops")
+    public Shops createShops(@RequestParam String name, @RequestParam String address, @RequestParam String phoneNumber) {
         shopsRepository.save(Shops.builder().name(name).address(address).phoneNumber(phoneNumber).build());
+        return shopsRepository.findByName(name);
+    }
+    //удаление магазина
+    @DeleteMapping("/deleteShop")
+    public void deleteShop(@PathVariable Integer id){
+        if (!productsRepository.existsByShopsId(id)) {
+            shopsRepository.deleteById(id);
+        }
     }
     //получение списка мазазинов
-
-    @RequestMapping("/getShops")
+    @GetMapping("/getShops")
     public List<Shops> getShops() {
         return shopsRepository.findAll();
     }
 
-//    @PostMapping("/putProducts/{id}&{number}")
-//    public void putProducts(@PathVariable Integer id, @PathVariable int number) {
-//        Products products = productsRepository.findById(id).get();
-//        products.setNumber(products.getNumber() - number);
-//        productsRepository.save(products);
-//    }
     //создание покупки
     @PostMapping("/createBuy/{nameShops}&{id}&{amount}&{nameBuyer}&{paymentMethod}")
     public void createBuy(@PathVariable String nameShops,@PathVariable Integer id,@PathVariable int amount,@PathVariable String nameBuyer,@PathVariable String paymentMethod) {
@@ -76,7 +82,6 @@ public class MainController {
     public void OrderFromWarehouses(@RequestParam Integer id,@RequestParam Integer idProductFromWarehouse, @RequestParam int number){
          if(productsRepository.findById(id).get().getNumber() + number <= 5000) {
              Products products = productsRepository.findById(id).get();
-
              products.setNumber(products.getNumber() + number);
              productsRepository.save(products);
              restTemplateServise.OrderFromWarehouses(idProductFromWarehouse, number,  products.getName(), products.getDescription());
