@@ -10,10 +10,8 @@ import com.tararantula.user_interface.service.RestTemplateServise;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -34,10 +32,11 @@ public class MainController {
     public ResponseEntity<Optional<BuyInfo>> getCheck(@PathVariable Integer id){
         return restTemplateServise.check(id);
     }
-    //создание покупателей
+    //создание покупателя
     @GetMapping("/createBuyer")
-    public void createBuyer(@RequestParam String name){
+    public Buyer createBuyer(@RequestParam String name){
         buyerRepository.save(Buyer.builder().name(name).build());
+        return buyerRepository.findByName(name);
     }
     //получение покупателя по id
     @GetMapping("/getByIdBuyer")
@@ -51,32 +50,9 @@ public class MainController {
         }
 
     }
-//    @GetMapping("/getAllBuyByBuyer")
-//    public List<Buy> getAllBuyByBuyer(@RequestParam Integer id){
-//        return buyRepository.findAllByBuyerId(id);
-//    }
-//    @GetMapping("/createBuys")
-//    public ResponseEntity<?> createBuys(@RequestParam String name, @RequestParam BigDecimal sum, @RequestParam Integer buyerId){
-//        if(buyerRepository.existsById(buyerId)){
-//            buyRepository.save(Buy.builder().name(name).sum(sum).buyerId(buyerId).build());
-//            return ResponseEntity.ok().build();
-//        }
-//        else {
-//            return ResponseEntity.status(401).build();
-//        }
-//    }
-//    @GetMapping("/getById")
-//    public Buy getById(@RequestParam Integer id){
-//        return buyRepository.findById(id).get();
-//    }
-//    @GetMapping("/getByDate")
-//    public Buy getByDate(@RequestParam Date buyingDate){
-//        return buyRepository.findByBuyingDate(buyingDate);
-//    }
-//    @PostMapping("/createCheck")
-//    public void createCheck(@RequestParam String name,@RequestParam int productId,@RequestParam int numberProduct){
-//        chequeRepository.save(Cheque.builder().name(name).productId(productId).numberProduct(numberProduct).build());
-//        restTemplateServise.putShops(productId,numberProduct);
-//    }
-
+    //удаление покупателя
+    @DeleteMapping("/deleteBuyer")
+    public void deleteBuyer(@PathVariable Integer id){
+        buyerRepository.deleteById(id);
+    }
 }
